@@ -24,10 +24,7 @@ Navigate the site by typing commands, just like a real shell.
 | `experience` | View my work experience |
 | `certifications` | View my certifications |
 | `clear` | Clear the terminal |
-| `echo <text>` | Echo text back |
-| `whoami` | Display current user |
 | `date` | Display current date and time |
-| `history` | Show command history |
 
 ## Tech Stack
 

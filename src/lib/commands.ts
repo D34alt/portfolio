@@ -18,9 +18,68 @@ function blank(): TerminalLine {
   return line("output", "");
 }
 
+function asciiHeader(art: string[]): TerminalLine[] {
+  return [blank(), ...art.map((row) => line("ascii", row)), blank()];
+}
+
+// ──────────────────────────────────────────────────
+// ASCII art headers (box-drawing "Calvin S" style)
+// ──────────────────────────────────────────────────
+
+const art = {
+  help: [
+    "  ╦ ╦╔═╗╦  ╔═╗",
+    "  ╠═╣║╣ ║  ╠═╝",
+    "  ╩ ╩╚═╝╩═╝╩  ",
+  ],
+  about: [
+    "  ╔═╗╔╗ ╔═╗╦ ╦╔╦╗",
+    "  ╠═╣╠╩╗║ ║║ ║ ║ ",
+    "  ╩ ╩╚═╝╚═╝╚═╝ ╩ ",
+  ],
+  projects: [
+    "  ╔═╗╦═╗╔═╗ ╦╔═╗╔═╗╔╦╗╔═╗",
+    "  ╠═╝╠╦╝║ ║ ║║╣ ║   ║ ╚═╗",
+    "  ╩  ╩╚═╚═╝╚╝╚═╝╚═╝ ╩ ╚═╝",
+  ],
+  skills: [
+    "  ╔═╗╦╔═╦╦  ╦  ╔═╗",
+    "  ╚═╗╠╩╗║║  ║  ╚═╗",
+    "  ╚═╝╩ ╩╩╩═╝╩═╝╚═╝",
+  ],
+  contact: [
+    "  ╔═╗╔═╗╔╗╔╔╦╗╔═╗╔═╗╔╦╗",
+    "  ║  ║ ║║║║ ║ ╠═╣║   ║ ",
+    "  ╚═╝╚═╝╝╚╝ ╩ ╩ ╩╚═╝ ╩ ",
+  ],
+  education: [
+    "  ╔═╗╔╦╗╦ ╦╔═╗╔═╗╔╦╗╦╔═╗╔╗╔",
+    "  ║╣  ║║║ ║║  ╠═╣ ║ ║║ ║║║║",
+    "  ╚═╝═╩╝╚═╝╚═╝╩ ╩ ╩ ╩╚═╝╝╚╝",
+  ],
+  experience: [
+    "  ╔═╗═╗ ╦╔═╗╔═╗╦═╗╦╔═╗╔╗╔╔═╗╔═╗",
+    "  ║╣ ╔╩╦╝╠═╝║╣ ╠╦╝║║╣ ║║║║  ║╣ ",
+    "  ╚═╝╩ ╚═╩  ╚═╝╩╚═╩╚═╝╝╚╝╚═╝╚═╝",
+  ],
+  certs: [
+    "  ╔═╗╔═╗╦═╗╔╦╗╔═╗",
+    "  ║  ║╣ ╠╦╝ ║ ╚═╗",
+    "  ╚═╝╚═╝╩╚═ ╩ ╚═╝",
+  ],
+  date: [
+    "  ╔╦╗╔═╗╔╦╗╔═╗",
+    "   ║║╠═╣ ║ ║╣ ",
+    "  ═╩╝╩ ╩ ╩ ╚═╝",
+  ],
+};
+
+// ──────────────────────────────────────────────────
+// Command registry
+// ──────────────────────────────────────────────────
+
 interface CommandDefinition {
   description: string;
-  usage?: string;
   handler: (args: string[], history: string[]) => TerminalLine[];
 }
 
@@ -28,10 +87,10 @@ const commandRegistry: Record<string, CommandDefinition> = {
   help: {
     description: "List all available commands",
     handler: () => {
-      const lines = [blank(), line("output", "  Available commands:"), blank()];
+      const lines = [...asciiHeader(art.help)];
       for (const [name, cmd] of Object.entries(commandRegistry)) {
         lines.push(
-          line("output", `    ${name.padEnd(14)} ${cmd.description}`)
+          line("output", `    ${name.padEnd(18)} ${cmd.description}`)
         );
       }
       lines.push(blank());
@@ -48,28 +107,23 @@ const commandRegistry: Record<string, CommandDefinition> = {
 
   about: {
     description: "Learn about me",
-    handler: () => {
-      const lines = [
-        blank(),
-        line("output", `  ${personalInfo.name}`),
-        line(
-          "system",
-          `  ${personalInfo.title} | ${personalInfo.location}`
-        ),
-        blank(),
-      ];
-      personalInfo.bio.forEach((para) => {
-        lines.push(line("output", `  ${para}`));
-      });
-      lines.push(blank());
-      return lines;
-    },
+    handler: () => [
+      ...asciiHeader(art.about),
+      line("output", `  ${personalInfo.name}`),
+      line(
+        "system",
+        `  ${personalInfo.title} | ${personalInfo.location}`
+      ),
+      blank(),
+      ...personalInfo.bio.map((para) => line("output", `  ${para}`)),
+      blank(),
+    ],
   },
 
   projects: {
     description: "View my projects",
     handler: () => {
-      const lines = [blank()];
+      const lines = [...asciiHeader(art.projects)];
       projects.forEach((project, i) => {
         lines.push(line("output", `  [${i}] ${project.name}`));
         lines.push(line("system", `      ${project.description}`));
@@ -86,7 +140,7 @@ const commandRegistry: Record<string, CommandDefinition> = {
   skills: {
     description: "View my technical skills",
     handler: () => {
-      const lines = [blank()];
+      const lines = [...asciiHeader(art.skills)];
       for (const [category, items] of Object.entries(skills)) {
         lines.push(line("output", `  ${category}`));
         lines.push(line("system", `    ${items.join(", ")}`));
@@ -99,9 +153,7 @@ const commandRegistry: Record<string, CommandDefinition> = {
   contact: {
     description: "Get my contact information",
     handler: () => [
-      blank(),
-      line("output", "  Contact:"),
-      blank(),
+      ...asciiHeader(art.contact),
       line("system", `    Email      ${personalInfo.email}`),
       line("system", `    GitHub     ${personalInfo.github}`),
       line("system", `    LinkedIn   ${personalInfo.linkedin}`),
@@ -112,7 +164,7 @@ const commandRegistry: Record<string, CommandDefinition> = {
   education: {
     description: "View my education",
     handler: () => {
-      const lines = [blank()];
+      const lines = [...asciiHeader(art.education)];
       education.forEach((entry) => {
         lines.push(line("output", `  ${entry.degree}`));
         lines.push(
@@ -127,7 +179,7 @@ const commandRegistry: Record<string, CommandDefinition> = {
   experience: {
     description: "View my work experience",
     handler: () => {
-      const lines = [blank()];
+      const lines = [...asciiHeader(art.experience)];
       experience.forEach((entry) => {
         lines.push(line("output", `  ${entry.role} @ ${entry.company}`));
         lines.push(line("system", `    ${entry.period}`));
@@ -141,7 +193,7 @@ const commandRegistry: Record<string, CommandDefinition> = {
   certifications: {
     description: "View my certifications",
     handler: () => {
-      const lines = [blank()];
+      const lines = [...asciiHeader(art.certs)];
       certifications.forEach((cert) => {
         lines.push(line("output", `  ${cert.name}`));
         lines.push(line("system", `    ${cert.issuer} | ${cert.issued}`));
@@ -156,37 +208,13 @@ const commandRegistry: Record<string, CommandDefinition> = {
     handler: () => [],
   },
 
-  echo: {
-    description: "Echo text back",
-    usage: "echo <text>",
-    handler: (args) => [line("output", `  ${args.join(" ")}`)],
-  },
-
-  whoami: {
-    description: "Display current user",
-    handler: () => [line("output", "  visitor")],
-  },
-
   date: {
     description: "Display current date and time",
-    handler: () => [line("output", `  ${new Date().toLocaleString()}`)],
-  },
-
-  history: {
-    description: "Show command history",
-    handler: (_args, commandHistory) => {
-      if (commandHistory.length === 0) {
-        return [line("system", "  No commands in history.")];
-      }
-      const lines = [blank()];
-      commandHistory.forEach((cmd, i) => {
-        lines.push(
-          line("output", `  ${String(i + 1).padStart(4)}  ${cmd}`)
-        );
-      });
-      lines.push(blank());
-      return lines;
-    },
+    handler: () => [
+      ...asciiHeader(art.date),
+      line("output", `  ${new Date().toLocaleString()}`),
+      blank(),
+    ],
   },
 };
 
