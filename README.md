@@ -61,7 +61,3 @@ The easiest way to deploy is via [Vercel](https://vercel.com):
 ```bash
 npm run build
 ```
-
-## Licence
-
-MIT
