@@ -52,3 +52,16 @@ body {
   background: rgba(34, 211, 238, 0.2);
   color: #e2e8f0;
 }
+
+/* ── CRT retro flicker ── */
+@keyframes crt-flicker {
+  0% {
+    opacity: 0.97;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.98;
+  }
+}
