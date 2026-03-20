@@ -81,22 +81,30 @@ export const experience: ExperienceEntry[] = [
     company: "MyConnect",
     role: "Home Moving Specialist",
     period: "2025 - Present",
-    description:
-      "Helping customers navigate the chaos of moving house: connections, utilities, and everything in between.",
+    description: [
+      "Inbound and outbound sales connecting customers with essential utilities such as electricity, gas, water, and internet.",
+    ],
   },
   {
     company: "NAB (National Australia Bank)",
     role: "Analyst Engineer",
     period: "Mar 2021 - Sep 2025",
-    description:
-      "Leveraged Python, AWS, and PostgreSQL to deliver engineering solutions in the banking sector.",
+    description: [
+      "Maintained the software change management lifecycle for mainframe applications using Endevor.",
+      "Ensured code was promoted and deployed to production environments reliably.",
+      "Contributed to projects such as ADDI and built internal web-based tools for monitoring and productivity.",
+      "Worked across teams in a versatile SCM/DevOps capacity.",
+    ],
   },
   {
     company: "Officeworks",
     role: "Retail Assistant (Tech)",
     period: "Mar 2019 - Mar 2021",
-    description:
-      "Tech assistant, point of service, and print and copy specialist.",
+    description: [
+      "General retail duties including point of sale, stock management, and shelf organisation.",
+      "Primarily stationed in the tech area assisting customers with technical inquiries.",
+      "Also covered print and copy services.",
+    ],
   },
 ];
 

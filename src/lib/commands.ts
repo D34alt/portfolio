@@ -171,7 +171,9 @@ const commandRegistry: Record<string, CommandDefinition> = {
       experience.forEach((entry) => {
         lines.push(line("output", `  ${entry.role} @ ${entry.company}`));
         lines.push(line("system", `    ${entry.period}`));
-        lines.push(line("system", `    ${entry.description}`));
+        entry.description.forEach((point) => {
+          lines.push(line("system", `    - ${point}`));
+        });
         lines.push(blank());
       });
       return lines;
