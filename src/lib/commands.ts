@@ -13,9 +13,10 @@ let lineCounter = 0;
 function line(
   type: TerminalLine["type"],
   content: string,
-  href?: string
+  href?: string,
+  copyText?: string
 ): TerminalLine {
-  return { id: `line-${lineCounter++}-${Date.now()}`, type, content, href };
+  return { id: `line-${lineCounter++}-${Date.now()}`, type, content, href, copyText };
 }
 
 function blank(): TerminalLine {
@@ -75,8 +76,38 @@ const commandRegistry: Record<string, CommandDefinition> = {
   },
 
   projects: {
-    description: "View my projects",
-    handler: () => {
+    description: "View my projects (use 'projects <number>' to open)",
+    handler: (args) => {
+      // If an index argument is provided, open that project in a new tab.
+      if (args.length > 0) {
+        const idx = parseInt(args[0], 10);
+
+        if (isNaN(idx) || idx < 0 || idx >= projects.length) {
+          return [
+            line("error", `  Invalid project index: ${args[0]}`),
+            line(
+              "system",
+              `  Valid range: 0 - ${projects.length - 1}`
+            ),
+          ];
+        }
+
+        const project = projects[idx];
+
+        if (!project.link) {
+          return [line("error", `  No link available for '${project.name}'.`)];
+        }
+
+        window.open(project.link, "_blank", "noopener,noreferrer");
+        return [
+          line(
+            "system",
+            `  Opening ${project.name} in a new tab ...`
+          ),
+        ];
+      }
+
+      // No argument -- list all projects.
       const lines = [...asciiHeader(art.projects)];
       projects.forEach((project, i) => {
         lines.push(
@@ -86,6 +117,10 @@ const commandRegistry: Record<string, CommandDefinition> = {
         lines.push(line("system", `      Tech: ${project.tech.join(", ")}`));
         lines.push(blank());
       });
+      lines.push(
+        line("system", "  Tip: run 'projects <number>' to open a project.")
+      );
+      lines.push(blank());
       return lines;
     },
   },
@@ -107,9 +142,9 @@ const commandRegistry: Record<string, CommandDefinition> = {
     description: "Get my contact information",
     handler: () => [
       ...asciiHeader(art.contact),
-      line("system", `    Email      ${personalInfo.email}`),
-      line("system", `    GitHub     ${personalInfo.github}`),
-      line("system", `    LinkedIn   ${personalInfo.linkedin}`),
+      line("system", `    Email      ${personalInfo.email}`, undefined, personalInfo.email),
+      line("system", `    GitHub     ${personalInfo.github}`, personalInfo.github),
+      line("system", `    LinkedIn   ${personalInfo.linkedin}`, personalInfo.linkedin),
       blank(),
     ],
   },
@@ -168,15 +203,6 @@ const commandRegistry: Record<string, CommandDefinition> = {
   clear: {
     description: "Clear the terminal",
     handler: () => [],
-  },
-
-  date: {
-    description: "Display current date and time",
-    handler: () => [
-      ...asciiHeader(art.date),
-      line("output", `  ${new Date().toLocaleString()}`),
-      blank(),
-    ],
   },
 };
 

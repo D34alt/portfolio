@@ -5,6 +5,7 @@ export interface TerminalLine {
   type: LineType;
   content: string;
   href?: string;
+  copyText?: string;
 }
 
 export interface PortfolioProject {

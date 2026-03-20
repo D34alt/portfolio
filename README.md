@@ -26,7 +26,6 @@ Type commands to explore -- just like you would in a real shell.
 - `experience` -- View my work experience
 - `certifications` -- View my certifications
 - `clear` -- Clear the terminal
-- `date` -- Display current date and time
 
 ## Tech Stack
 
