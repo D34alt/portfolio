@@ -60,7 +60,7 @@ export const skills: Record<string, string[]> = {
   Frontend: ["React", "Next.js", "Tailwind CSS"],
   Backend: ["Node.js", "Express"],
   Tools: ["Git", "Docker", "Linux"],
-  Other: ["AI/ML", "REST APIs", "Digital Marketing"],
+  Other: ["REST APIs", "Digital Marketing", "Piano", "Watching Dachshunds", "Losing at Chess"],
 };
 
 export const education: EducationEntry[] = [

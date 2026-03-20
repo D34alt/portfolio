@@ -54,17 +54,6 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the portfolio.
 
-## Customisation
-
-All personal data lives in `src/lib/data.ts` -- edit that file to swap in your
-own bio, projects, skills, experience, education, and certifications.
-
-ASCII art headers are auto-generated from command names. To regenerate them:
-
-```bash
-npm run generate:ascii
-```
-
 ## Deployment
 
 The easiest way to deploy is via [Vercel](https://vercel.com):
