@@ -10,8 +10,12 @@ import {
 
 let lineCounter = 0;
 
-function line(type: TerminalLine["type"], content: string): TerminalLine {
-  return { id: `line-${lineCounter++}-${Date.now()}`, type, content };
+function line(
+  type: TerminalLine["type"],
+  content: string,
+  href?: string
+): TerminalLine {
+  return { id: `line-${lineCounter++}-${Date.now()}`, type, content, href };
 }
 
 function blank(): TerminalLine {
@@ -75,12 +79,11 @@ const commandRegistry: Record<string, CommandDefinition> = {
     handler: () => {
       const lines = [...asciiHeader(art.projects)];
       projects.forEach((project, i) => {
-        lines.push(line("output", `  [${i}] ${project.name}`));
+        lines.push(
+          line("output", `  [${i}] ${project.name}`, project.link)
+        );
         lines.push(line("system", `      ${project.description}`));
         lines.push(line("system", `      Tech: ${project.tech.join(", ")}`));
-        if (project.link) {
-          lines.push(line("system", `      ${project.link}`));
-        }
         lines.push(blank());
       });
       return lines;
@@ -151,6 +154,15 @@ const commandRegistry: Record<string, CommandDefinition> = {
       });
       return lines;
     },
+  },
+
+  dachshund: {
+    description: "????",
+    handler: () => [
+      ...asciiHeader(art.dachshund),
+      line("system", "  A good boy appeared! Long boi energy."),
+      blank(),
+    ],
   },
 
   clear: {

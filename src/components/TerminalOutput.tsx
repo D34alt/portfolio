@@ -1,6 +1,7 @@
 "use client";
 
 import { TerminalLine } from "@/lib/types";
+import ScrambleText from "./ScrambleText";
 
 interface Props {
   lines: TerminalLine[];
@@ -36,8 +37,21 @@ export default function TerminalOutput({ lines }: Props) {
               <span className="text-slate-500">:~$ </span>
               <span className="text-slate-300">{line.content}</span>
             </span>
+          ) : line.href ? (
+            <a
+              href={line.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline cursor-pointer"
+            >
+              <span style={{ whiteSpace: "pre-wrap" }}>
+                <ScrambleText text={line.content} />
+              </span>
+            </a>
           ) : (
-            <span style={{ whiteSpace: "pre-wrap" }}>{line.content}</span>
+            <span style={{ whiteSpace: "pre-wrap" }}>
+              <ScrambleText text={line.content} />
+            </span>
           )}
         </div>
       ))}

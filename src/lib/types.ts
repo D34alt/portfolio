@@ -4,6 +4,7 @@ export interface TerminalLine {
   id: string;
   type: LineType;
   content: string;
+  href?: string;
 }
 
 export interface PortfolioProject {

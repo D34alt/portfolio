@@ -10,6 +10,8 @@ import { useAutoComplete } from "@/hooks/useAutoComplete";
 import { executeCommand } from "@/lib/commands";
 import { TerminalLine } from "@/lib/types";
 
+const LINE_DELAY_MS = 30;
+
 function createWelcomeLines(): TerminalLine[] {
   return [
     {
@@ -24,11 +26,21 @@ function createWelcomeLines(): TerminalLine[] {
 export default function Terminal() {
   const [lines, setLines] = useState<TerminalLine[]>(createWelcomeLines());
   const [input, setInput] = useState("");
+  const [isAnimating, setIsAnimating] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const pendingLinesRef = useRef<TerminalLine[]>([]);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { history, addToHistory, navigateUp, navigateDown, resetIndex } =
     useCommandHistory();
   const { complete } = useAutoComplete();
+
+  // Clean up interval on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
 
   // Auto-scroll to bottom whenever new lines are added
   useEffect(() => {
@@ -37,9 +49,25 @@ export default function Terminal() {
     }
   }, [lines]);
 
+  // Refocus the input once the animation finishes
+  useEffect(() => {
+    if (!isAnimating) {
+      inputRef.current?.focus();
+    }
+  }, [isAnimating]);
+
   // Focus input when clicking anywhere in the terminal body
   const handleTerminalClick = useCallback(() => {
     inputRef.current?.focus();
+  }, []);
+
+  const stopAnimation = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    pendingLinesRef.current = [];
+    setIsAnimating(false);
   }, []);
 
   const handleSubmit = useCallback(() => {
@@ -52,9 +80,24 @@ export default function Terminal() {
     const { lines: outputLines, isClear } = executeCommand(input, history);
 
     if (isClear) {
+      stopAnimation();
       setLines([]);
     } else {
-      setLines((prev) => [...prev, inputLine, ...outputLines]);
+      setLines((prev) => [...prev, inputLine]);
+
+      if (outputLines.length > 0) {
+        setIsAnimating(true);
+        pendingLinesRef.current = [...outputLines];
+
+        intervalRef.current = setInterval(() => {
+          const next = pendingLinesRef.current.shift();
+          if (next) {
+            setLines((prev) => [...prev, next]);
+          } else {
+            stopAnimation();
+          }
+        }, LINE_DELAY_MS);
+      }
     }
 
     if (input.trim()) {
@@ -62,7 +105,7 @@ export default function Terminal() {
     }
 
     setInput("");
-  }, [input, history, addToHistory]);
+  }, [input, history, addToHistory, stopAnimation]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -95,13 +138,15 @@ export default function Terminal() {
       >
         <AsciiArt />
         <TerminalOutput lines={lines} />
-        <CommandInput
-          ref={inputRef}
-          value={input}
-          onChange={setInput}
-          onSubmit={handleSubmit}
-          onKeyDown={handleKeyDown}
-        />
+        {!isAnimating && (
+          <CommandInput
+            ref={inputRef}
+            value={input}
+            onChange={setInput}
+            onSubmit={handleSubmit}
+            onKeyDown={handleKeyDown}
+          />
+        )}
       </div>
     </div>
   );

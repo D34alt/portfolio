@@ -8,15 +8,30 @@ import {
 export const personalInfo = {
   name: "Danny Nguyen",
   handle: "danny",
-  title: "Analyst Engineer",
+  title: "Developer | Perpetual Tinkerer",
   location: "Melbourne, Australia",
   bio: [
-    "Analyst Engineer with over four years of experience at NAB,",
-    "specialising in Python, AWS, and PostgreSQL.",
-    "Passionate about web development, AI/ML, and open-source.",
-    "Prefer hosting AI services locally with a beefy GPU setup.",
+    "Hey, I'm Danny. The kind of person who waited five minutes",
+    "for a floppy-disk PC to boot just to play Pinball Space Cadet.",
+    "",
+    "I spent over four years as an Analyst Engineer at NAB, working",
+    "with Python, AWS, and PostgreSQL in the banking space. These",
+    "days I'm at MyConnect helping people sort out their home moves,",
+    "but my heart's still very much in code.",
+    "",
+    "If I can learn the mainframe, I can learn just about anything,",
+    "and I intend to prove it. Currently sharpening my Next.js",
+    "skills and picking up Ruby.",
+    "",
+    "Past adventures include building a Minecraft AI mod, and an",
+    "auto-scheduler that reads my partner's roster texts and drops",
+    "shifts straight into her calendar (with pay calculations,",
+    "because why not).",
+    "",
+    "When I'm not at a keyboard you'll find me at a piano, on a",
+    "basketball court, or quietly losing at chess.",
   ],
-  email: "your.email@example.com",
+  email: "d34ault@proton.me",
   github: "https://github.com/d3f4lt",
   linkedin: "https://www.linkedin.com/in/vdannynguyen/",
 };
@@ -32,7 +47,7 @@ export const projects: PortfolioProject[] = [
   {
     name: "terminal-portfolio",
     description:
-      "This very portfolio -- a terminal-themed personal website built with Next.js.",
+      "This very portfolio, a terminal-themed personal website built with Next.js.",
     tech: ["TypeScript", "Next.js", "Tailwind CSS"],
     link: "https://github.com/d3f4lt/portfolio",
   },
@@ -63,11 +78,18 @@ export const education: EducationEntry[] = [
 
 export const experience: ExperienceEntry[] = [
   {
+    company: "MyConnect",
+    role: "Home Moving Specialist",
+    period: "2025 - Present",
+    description:
+      "Helping customers navigate the chaos of moving house: connections, utilities, and everything in between.",
+  },
+  {
     company: "NAB (National Australia Bank)",
     role: "Analyst Engineer",
     period: "Mar 2021 - Sep 2025",
     description:
-      "Leveraging Python, AWS, and PostgreSQL to deliver engineering solutions in the banking sector.",
+      "Leveraged Python, AWS, and PostgreSQL to deliver engineering solutions in the banking sector.",
   },
   {
     company: "Officeworks",
