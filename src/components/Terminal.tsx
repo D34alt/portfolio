@@ -5,6 +5,7 @@ import TitleBar from "./TitleBar";
 import AsciiArt from "./AsciiArt";
 import TerminalOutput from "./TerminalOutput";
 import CommandInput from "./CommandInput";
+import ShutdownOverlay from "./ShutdownOverlay";
 import { useCommandHistory } from "@/hooks/useCommandHistory";
 import { useAutoComplete } from "@/hooks/useAutoComplete";
 import { executeCommand } from "@/lib/commands";
@@ -27,6 +28,9 @@ export default function Terminal() {
   const [lines, setLines] = useState<TerminalLine[]>(createWelcomeLines());
   const [input, setInput] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isShuttingDown, setIsShuttingDown] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [isCrtMode, setIsCrtMode] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const pendingLinesRef = useRef<TerminalLine[]>([]);
@@ -128,9 +132,54 @@ export default function Terminal() {
     [input, navigateUp, navigateDown, complete, resetIndex]
   );
 
+  // Titlebar button handlers
+  const handleClose = useCallback(() => {
+    if (isShuttingDown) return;
+    setIsShuttingDown(true);
+  }, [isShuttingDown]);
+
+  const handleShutdownComplete = useCallback(() => {
+    setIsShuttingDown(false);
+    setLines([
+      {
+        id: `reboot-${Date.now()}`,
+        type: "system",
+        content: "Nice try. I'm not that easy to kill.",
+      },
+      { id: `reboot-blank-${Date.now()}`, type: "output", content: "" },
+    ]);
+  }, []);
+
+  const handleMinimise = useCallback(() => {
+    setIsFlipped((prev) => !prev);
+  }, []);
+
+  const handleMaximise = useCallback(() => {
+    setIsCrtMode((prev) => !prev);
+  }, []);
+
+  const rootStyle: React.CSSProperties = {
+    transform: isFlipped ? "rotate(180deg)" : "none",
+    transition: "transform 0.6s ease",
+  };
+
+  if (isCrtMode) {
+    rootStyle.animation = "crt-flicker 0.15s infinite";
+    rootStyle.filter =
+      "brightness(1.1) sepia(100%) saturate(300%) hue-rotate(80deg)";
+  }
+
   return (
-    <div className="flex flex-col h-screen w-screen bg-slate-950">
-      <TitleBar />
+    <div
+      className="flex flex-col h-screen w-screen bg-slate-950 relative"
+      style={rootStyle}
+    >
+      <TitleBar
+        onClose={handleClose}
+        onMinimise={handleMinimise}
+        onMaximise={handleMaximise}
+        isCrtMode={isCrtMode}
+      />
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 cursor-text"
@@ -148,6 +197,21 @@ export default function Terminal() {
           />
         )}
       </div>
+      {isShuttingDown && (
+        <ShutdownOverlay onComplete={handleShutdownComplete} />
+      )}
+      {isCrtMode && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background:
+              "repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px)",
+            pointerEvents: "none",
+            zIndex: 50,
+          }}
+        />
+      )}
     </div>
   );
 }
