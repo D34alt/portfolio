@@ -32,7 +32,7 @@ export const personalInfo = {
     "basketball court, or quietly losing at chess.",
   ],
   email: "d34ault@proton.me",
-  github: "https://github.com/d3f4lt",
+  github: "https://github.com/D34alt",
   linkedin: "https://www.linkedin.com/in/vdannynguyen/",
 };
 
@@ -42,14 +42,14 @@ export const projects: PortfolioProject[] = [
     description:
       "A utility for converting EML email files to PDF format.",
     tech: ["Python"],
-    link: "https://github.com/d3f4lt/eml_to_pdf",
+    link: "https://github.com/D34alt/eml_to_pdf",
   },
   {
     name: "terminal-portfolio",
     description:
       "This very portfolio, a terminal-themed personal website built with Next.js.",
     tech: ["TypeScript", "Next.js", "Tailwind CSS"],
-    link: "https://github.com/d3f4lt/portfolio",
+    link: "https://github.com/D34alt/portfolio",
   },
 ];
 
