@@ -183,7 +183,7 @@ const commandRegistry: Record<string, CommandDefinition> = {
     handler: () => {
       const lines = [...asciiHeader(art.certs)];
       certifications.forEach((cert) => {
-        lines.push(line("output", `  ${cert.name}`));
+        lines.push(line("output", `  ${cert.name}`, cert.link));
         lines.push(line("system", `    ${cert.issuer} | ${cert.issued}`));
         lines.push(blank());
       });

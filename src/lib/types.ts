@@ -32,4 +32,5 @@ export interface CertificationEntry {
   name: string;
   issuer: string;
   issued: string;
+  link?: string;
 }

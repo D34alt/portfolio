@@ -105,15 +105,18 @@ export const certifications: CertificationEntry[] = [
     name: "Fundamentals of Digital Marketing",
     issuer: "Google Digital Garage",
     issued: "Jun 2023",
+    link: "https://skillshop.exceedlms.com/student/award/4Rqsd59XTKYNzoKVLp78AgXD",
   },
   {
     name: "IBM Z Xplore - Concepts",
     issuer: "IBM",
     issued: "Oct 2022",
+    link: "https://www.credly.com/badges/c6411693-ed89-4189-b905-e6b6561c8977/linked_in_profile",
   },
   {
     name: "Master the Mainframe 2020 - Level 2",
     issuer: "IBM",
     issued: "Aug 2021",
+    link: "https://www.credly.com/badges/26e75ce2-a4b8-43fe-8cc8-225f5e65e267?source=linked_in_profile",
   },
 ];
