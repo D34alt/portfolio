@@ -53,6 +53,12 @@ body {
   color: #e2e8f0;
 }
 
+/* Allow long words / URLs to break rather than overflow */
+.break-anywhere {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
 /* ── CRT retro flicker ── */
 @keyframes crt-flicker {
   0% {

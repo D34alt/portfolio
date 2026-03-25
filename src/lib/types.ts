@@ -1,4 +1,4 @@
-export type LineType = "input" | "output" | "error" | "ascii" | "system";
+export type LineType = "input" | "output" | "error" | "ascii" | "header" | "tip" | "system";
 
 export interface TerminalLine {
   id: string;
@@ -6,6 +6,8 @@ export interface TerminalLine {
   content: string;
   href?: string;
   copyText?: string;
+  /** Restrict this line to a specific viewport. */
+  visibility?: "mobile" | "desktop" | "all";
 }
 
 export interface PortfolioProject {

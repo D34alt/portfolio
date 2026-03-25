@@ -37,7 +37,9 @@ export default function Terminal() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { history, addToHistory, navigateUp, navigateDown, resetIndex } =
     useCommandHistory();
-  const { complete } = useAutoComplete();
+  const { complete, suggest } = useAutoComplete();
+
+  const suggestion = suggest(input);
 
   // Clean up interval on unmount
   useEffect(() => {
@@ -182,7 +184,7 @@ export default function Terminal() {
       />
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-4 cursor-text"
+        className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-4 px-3 cursor-text text-sm sm:text-base"
         onClick={handleTerminalClick}
       >
         <AsciiArt />
@@ -191,6 +193,7 @@ export default function Terminal() {
           <CommandInput
             ref={inputRef}
             value={input}
+            suggestion={suggestion}
             onChange={setInput}
             onSubmit={handleSubmit}
             onKeyDown={handleKeyDown}

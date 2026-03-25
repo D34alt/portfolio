@@ -23,8 +23,13 @@ function blank(): TerminalLine {
   return line("output", "");
 }
 
-function asciiHeader(art: string[]): TerminalLine[] {
-  return [blank(), ...art.map((row) => line("ascii", row)), blank()];
+function asciiHeader(art: string[], label: string): TerminalLine[] {
+  return [
+    blank(),
+    line("header", `[ ${label} ]`),
+    ...art.map((row) => line("ascii", row)),
+    blank(),
+  ];
 }
 
 import { asciiArt as art } from "./asciiArt";
@@ -35,6 +40,7 @@ import { asciiArt as art } from "./asciiArt";
 
 interface CommandDefinition {
   description: string;
+  mobileDescription?: string;
   handler: (args: string[], history: string[]) => TerminalLine[];
 }
 
@@ -42,19 +48,27 @@ const commandRegistry: Record<string, CommandDefinition> = {
   help: {
     description: "List all available commands",
     handler: () => {
-      const lines = [...asciiHeader(art.help)];
+      const lines = [...asciiHeader(art.help, "Help")];
       for (const [name, cmd] of Object.entries(commandRegistry)) {
-        lines.push(
-          line("output", `    ${name.padEnd(18)} ${cmd.description}`)
-        );
+        lines.push(line("output", `  ${name}`));
+        if (cmd.mobileDescription) {
+          const desktop = line("system", `    ${cmd.description}`);
+          desktop.visibility = "desktop";
+          lines.push(desktop);
+          const mobile = line("system", `    ${cmd.mobileDescription}`);
+          mobile.visibility = "mobile";
+          lines.push(mobile);
+        } else {
+          lines.push(line("system", `    ${cmd.description}`));
+        }
       }
       lines.push(blank());
-      lines.push(
-        line(
-          "system",
-          "  Tip: use Tab for auto-completion and arrow keys for history."
-        )
-      );
+      const desktopTip = line("tip", "  Tip: use Tab for auto-complete, arrows for history.");
+      desktopTip.visibility = "desktop";
+      lines.push(desktopTip);
+      const mobileTip = line("tip", "  Tip: press Space to auto-complete commands.");
+      mobileTip.visibility = "mobile";
+      lines.push(mobileTip);
       lines.push(blank());
       return lines;
     },
@@ -63,7 +77,7 @@ const commandRegistry: Record<string, CommandDefinition> = {
   about: {
     description: "Learn about me",
     handler: () => [
-      ...asciiHeader(art.about),
+      ...asciiHeader(art.about, "About"),
       line("output", `  ${personalInfo.name}`),
       line(
         "system",
@@ -77,6 +91,7 @@ const commandRegistry: Record<string, CommandDefinition> = {
 
   projects: {
     description: "View my projects (use 'projects <number>' to open)",
+    mobileDescription: "View my projects",
     handler: (args) => {
       // If an index argument is provided, open that project in a new tab.
       if (args.length > 0) {
@@ -108,18 +123,21 @@ const commandRegistry: Record<string, CommandDefinition> = {
       }
 
       // No argument -- list all projects.
-      const lines = [...asciiHeader(art.projects)];
+      const lines = [...asciiHeader(art.projects, "Projects")];
       projects.forEach((project, i) => {
         lines.push(
           line("output", `  [${i}] ${project.name}`, project.link)
         );
-        lines.push(line("system", `      ${project.description}`));
-        lines.push(line("system", `      Tech: ${project.tech.join(", ")}`));
+        lines.push(line("system", `    ${project.description}`));
+        lines.push(line("system", `    Tech: ${project.tech.join(", ")}`));
         lines.push(blank());
       });
-      lines.push(
-        line("system", "  Tip: run 'projects <number>' to open a project.")
-      );
+      const desktopProjectsTip = line("tip", "  Tip: run 'projects <number>' to open a project.");
+      desktopProjectsTip.visibility = "desktop";
+      lines.push(desktopProjectsTip);
+      const mobileProjectsTip = line("tip", "  Tip: tap a project name to open it.");
+      mobileProjectsTip.visibility = "mobile";
+      lines.push(mobileProjectsTip);
       lines.push(blank());
       return lines;
     },
@@ -128,7 +146,7 @@ const commandRegistry: Record<string, CommandDefinition> = {
   skills: {
     description: "View my technical skills",
     handler: () => {
-      const lines = [...asciiHeader(art.skills)];
+      const lines = [...asciiHeader(art.skills, "Skills")];
       for (const [category, items] of Object.entries(skills)) {
         lines.push(line("output", `  ${category}`));
         lines.push(line("system", `    ${items.join(", ")}`));
@@ -141,10 +159,12 @@ const commandRegistry: Record<string, CommandDefinition> = {
   contact: {
     description: "Get my contact information",
     handler: () => [
-      ...asciiHeader(art.contact),
-      line("system", `    Email      ${personalInfo.email}`, undefined, personalInfo.email),
-      line("system", `    GitHub     ${personalInfo.github}`, personalInfo.github),
-      line("system", `    LinkedIn   ${personalInfo.linkedin}`, personalInfo.linkedin),
+      ...asciiHeader(art.contact, "Contact"),
+      line("system", `  Email    ${personalInfo.email}`, undefined, personalInfo.email),
+      line("system", `  GitHub   ${personalInfo.github}`, personalInfo.github),
+      line("system", `  LinkedIn ${personalInfo.linkedin}`, personalInfo.linkedin),
+      blank(),
+      (() => { const t = line("tip", "  Tip: tap a link to open it."); t.visibility = "mobile"; return t; })(),
       blank(),
     ],
   },
@@ -152,7 +172,7 @@ const commandRegistry: Record<string, CommandDefinition> = {
   education: {
     description: "View my education",
     handler: () => {
-      const lines = [...asciiHeader(art.education)];
+      const lines = [...asciiHeader(art.education, "Education")];
       education.forEach((entry) => {
         lines.push(line("output", `  ${entry.degree}`));
         lines.push(
@@ -167,12 +187,12 @@ const commandRegistry: Record<string, CommandDefinition> = {
   experience: {
     description: "View my work experience",
     handler: () => {
-      const lines = [...asciiHeader(art.experience)];
+      const lines = [...asciiHeader(art.experience, "Experience")];
       experience.forEach((entry) => {
         lines.push(line("output", `  ${entry.role} @ ${entry.company}`));
-        lines.push(line("system", `    ${entry.period}`));
+        lines.push(line("system", `  ${entry.period}`));
         entry.description.forEach((point) => {
-          lines.push(line("system", `    - ${point}`));
+          lines.push(line("system", `  - ${point}`));
         });
         lines.push(blank());
       });
@@ -183,23 +203,34 @@ const commandRegistry: Record<string, CommandDefinition> = {
   certifications: {
     description: "View my certifications",
     handler: () => {
-      const lines = [...asciiHeader(art.certs)];
+      const lines = [...asciiHeader(art.certs, "Certifications")];
       certifications.forEach((cert) => {
         lines.push(line("output", `  ${cert.name}`, cert.link));
         lines.push(line("system", `    ${cert.issuer} | ${cert.issued}`));
         lines.push(blank());
       });
+      const mobileCertsTip = line("tip", "  Tip: tap a certification to open it.");
+      mobileCertsTip.visibility = "mobile";
+      lines.push(mobileCertsTip);
+      lines.push(blank());
       return lines;
     },
   },
 
   dachshund: {
     description: "????",
-    handler: () => [
-      ...asciiHeader(art.dachshund),
-      line("system", "  A good boy appeared! Long boi energy."),
-      blank(),
-    ],
+    handler: () => {
+      const header = asciiHeader(art.dachshund, "Dachshund");
+      // Show the dachshund art on mobile too -- it fits!
+      header.forEach((l) => {
+        if (l.type === "ascii") l.visibility = "all";
+      });
+      return [
+        ...header,
+        line("system", "  A good boy appeared! Long boi energy."),
+        blank(),
+      ];
+    },
   },
 
   clear: {

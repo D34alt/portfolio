@@ -1,20 +1,38 @@
 "use client";
 
-import { forwardRef } from "react";
+import { forwardRef, useRef, useEffect } from "react";
 
 interface Props {
   value: string;
+  suggestion: string | null;
   onChange: (value: string) => void;
   onSubmit: () => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const CommandInput = forwardRef<HTMLInputElement, Props>(
-  ({ value, onChange, onSubmit, onKeyDown }, ref) => {
+  ({ value, suggestion, onChange, onSubmit, onKeyDown }, ref) => {
+    const ghost = suggestion ? suggestion.slice(value.trimStart().length) : "";
+    const isMobileRef = useRef(false);
+
+    useEffect(() => {
+      const mq = window.matchMedia("(max-width: 639px)");
+      isMobileRef.current = mq.matches;
+      const handler = (e: MediaQueryListEvent) => { isMobileRef.current = e.matches; };
+      mq.addEventListener("change", handler);
+      return () => mq.removeEventListener("change", handler);
+    }, []);
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         e.preventDefault();
         onSubmit();
+        return;
+      }
+      // Accept suggestion on Space (mobile only)
+      if (e.key === " " && isMobileRef.current && suggestion && ghost) {
+        e.preventDefault();
+        onChange(suggestion);
         return;
       }
       onKeyDown(e);
@@ -40,6 +58,14 @@ const CommandInput = forwardRef<HTMLInputElement, Props>(
             autoCapitalize="off"
             spellCheck={false}
           />
+          {ghost && (
+            <span
+              className="absolute top-0 pointer-events-none text-slate-600 select-none"
+              style={{ left: `${value.length}ch` }}
+            >
+              {ghost}
+            </span>
+          )}
           <span
             className="cursor-blink absolute top-0 pointer-events-none text-slate-400"
             style={{ left: `${value.length}ch` }}

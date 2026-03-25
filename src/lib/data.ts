@@ -8,7 +8,7 @@ import {
 export const personalInfo = {
   name: "Danny Nguyen",
   handle: "danny",
-  title: "Developer | Perpetual Tinkerer",
+  title: "Developer | Recovering Mainframe Engineer",
   location: "Melbourne, Australia",
   bio: [
     "Hey, I'm Danny. The kind of person who waited five minutes",

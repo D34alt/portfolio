@@ -12,7 +12,11 @@ Type commands to explore -- just like you would in a real shell.
 - Scramble-reveal text animation on command output
 - ASCII art headers generated with Figlet (via `npm run generate:ascii`)
 - Staggered line-by-line output rendering
-- Responsive layout that works on mobile and desktop
+- Responsive layout with mobile-specific optimisations
+  - Inline ghost autocomplete with Space-to-accept on mobile
+  - Shortened banner and plain-text headers for narrow screens
+  - Tappable links with visible underlines
+  - Viewport-aware tips and command descriptions
 - A hidden easter egg for the curious
 
 ## Available Commands
