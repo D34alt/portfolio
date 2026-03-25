@@ -127,4 +127,10 @@ export const certifications: CertificationEntry[] = [
     issued: "Aug 2021",
     link: "https://www.credly.com/badges/26e75ce2-a4b8-43fe-8cc8-225f5e65e267?source=linked_in_profile",
   },
+  {
+    name: "Learn Javascript",
+    issuer: "Scrimba",
+    issued: "Jul 2025",
+    link: "https://scrimba.com/u4e4a68:certs;cert2uNjfKA21D8tH4DwVFod9VhvMuaQTu2vkaG",
+  },
 ];
