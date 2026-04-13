@@ -38,6 +38,13 @@ export const personalInfo = {
 
 export const projects: PortfolioProject[] = [
   {
+    name: "s1imple-finance",
+    description:
+      "A personal finance tracker to monitor spending, budgets, and financial goals.",
+    tech: ["TypeScript", "Next.js", "Tailwind CSS"],
+    link: "https://github.com/D34alt/s1imple-finance",
+  },
+  {
     name: "eml_to_pdf",
     description:
       "A utility for converting EML email files to PDF format.",
